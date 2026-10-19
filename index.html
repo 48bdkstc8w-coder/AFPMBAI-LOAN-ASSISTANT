@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AFPMBAI Loan" />
+  <title>AFPMBAI LOAN ASSISTANT</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-navy: #0d1e38;
+      --secondary-navy: #152f55;
+      --accent-gold: #c59b27;
+      --accent-gold-hover: #b0871d;
+      --bg-canvas: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --bubble-bot: #ffffff;
+      --bubble-user: #0d1e38;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      background-color: var(--primary-navy);
+      color: var(--text-main);
+      overflow: hidden;
+    }
+
+    #app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      background-color: var(--bg-canvas);
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    /* HEADER */
+    header {
+      background-color: var(--primary-navy);
+      padding: calc(var(--safe-top) + 12px) 16px 14px 16px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--accent-gold);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .shield-badge {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-gold), #8c6a11);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+
+    .title-group h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .title-group p {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:active {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* QUICK ACTIONS / SUGGESTIONS BAR */
+    .quick-prompts-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 14px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .quick-prompts-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .prompt-chip {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--secondary-navy);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .prompt-chip:active {
+      background: #e2e8f0;
+      border-color: var(--accent-gold);
+    }
+
+    /* CHAT STREAM CONTAINER */
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      max-width: 86%;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .message.bot {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .bubble {
+      padding: 12px 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.45;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .message.user .bubble {
+      background-color: var(--bubble-user);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.bot .bubble {
+      background-color: var(--bubble-bot);
+      color: var(--text-main);
+      border: 1px solid #e2e8f0;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .citation-box {
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: #f8fafc;
+      border-left: 3px solid var(--accent-gold);
+      font-size: 11px;
+      color: #475569;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .citation-box a {
+      color: var(--secondary-navy);
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      color: #94a3b8;
+      margin-top: 4px;
+      padding: 0 4px;
+    }
+
+    /* CHAT INPUT AREA */
+    .chat-input-container {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 10px 14px calc(var(--safe-bottom) + 10px) 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border: 1px solid #d1d5db;
+      border-radius: 24px;
+      padding: 4px 14px;
+      transition: border 0.2s;
+    }
+
+    .input-wrapper:focus-within {
+      border-color: var(--accent-gold);
+      background: #ffffff;
+    }
+
+    #chat-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 16px; /* Crucial for iOS Safari to prevent auto-zooming */
+      color: var(--text-main);
+      padding: 6px 0;
+    }
+
+    .send-btn {
+      background: var(--primary-navy);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: opacity 0.2s, background 0.2s;
+    }
+
+    .send-btn:active {
+      background: var(--accent-gold);
+    }
+
+    /* ESCALATION ACTION CARD IN BOT MESSAGE */
+    .escalate-card {
+      margin-top: 10px;
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .btn-escalate {
+      background: var(--accent-gold);
+      color: #0d1e38;
+      font-weight: 600;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+
+    .btn-escalate:active {
+      background: var(--accent-gold-hover);
+    }
+
+    /* MODAL DRAWER */
+    .modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 100;
+      display: none;
+      justify-content: flex-end;
+      flex-direction: column;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-sheet {
+      background: #ffffff;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 20px 18px calc(var(--safe-bottom) + 20px) 18px;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      background: #cbd5e1;
+      border-radius: 2px;
+      margin: 0 auto 16px auto;
+    }
+
+    .sheet-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary-navy);
+      margin-bottom: 6px;
+    }
+
+    .sheet-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+      color: var(--text-main);
+      background: #f9fafb;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+      background: #fff;
+    }
+
+    .privacy-notice {
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+      color: #1e40af;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 12px;
+      color: #374151;
+      margin-bottom: 16px;
+    }
+
+    .checkbox-row input {
+      margin-top: 2px;
+      accent-color: var(--accent-gold);
+      width: 16px;
+      height: 16px;
+    }
+
+    .sheet-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      background: #e2e8f0;
+      color: #334155;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      flex: 2;
+      background: var(--primary-navy);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* KNOWLEDGE SETTINGS DRAWER */
+    .admin-pill {
+      font-size: 11px;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    /* TYPING INDICATOR */
+    .typing-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+    }
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      background: #94a3b8;
+      border-radius: 50%;
+      animation: blink 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1.1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- APP HEADER -->
+    <header>
+      <div class="brand-section">
+        <div class="shield-badge">AFP</div>
+        <div class="title-group">
+          <h1>AFPMBAI LOAN ASSISTANT</h1>
+          <p>Official Guidelines & Policy Verification</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-knowledge-mgr" title="Knowledge Base & Settings">⚙️</button>
+        <button class="icon-btn" id="btn-clear-chat" title="Clear Conversation">🗑️</button>
+      </div>
+    </header>
+
+    <!-- QUICK PROMPTS BAR -->
+    <div class="quick-prompts-bar">
+      <button class="prompt-chip" data-prompt="Anu-ano ang mga loan products ng AFPMBAI?">📋 All Loan Products</button>
+      <button class="prompt-chip" data-prompt="Salary Loan requirements at eligibility?">🎖️ Salary Loan</button>
+      <button class="prompt-chip" data-prompt="Paano mag-apply ng Policy Loan?">📄 Policy Loan</button>
+      <button class="prompt-chip" data-prompt="May Calamity Loan ba ngayon?">🌧️ Calamity Loan</button>
+      <button class="prompt-chip" data-prompt="Ano ang Housing Loan ng AFPMBAI?">🏠 Housing Loan</button>
+    </div>
+
+    <!-- CHAT MESSAGES STREAM -->
+    <main id="chat-messages" role="log" aria-live="polite">
+      <!-- Injected dynamically -->
+    </main>
+
+    <!-- CHAT INPUT FORM -->
+    <form class="chat-input-container" id="chat-form" onsubmit="event.preventDefault(); handleSend();">
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="chat-input" 
+          placeholder="Magtanong ukol sa loans (Tagalog / English)..." 
+          autocomplete="off" 
+          autocorrect="on"
+          spellcheck="false"
+        />
+      </div>
+      <button type="submit" class="send-btn" id="send-button" aria-label="Send Message">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+
+    <!-- ESCALATION MODAL (For Unanswered/Special Inquiries) -->
+    <div class="modal-overlay" id="escalate-modal">
+      <div class="modal-sheet">
+        <div class="sheet-handle"></div>
+        <h2 class="sheet-title">Forward Inquiry to AFPMBAI</h2>
+        <p class="sheet-sub">The assistant could not find a 100% verified policy answer for your query. We can package your question directly for verification.</p>
+
+        <div class="privacy-notice">
+          <strong>🔒 Data Privacy Act (RA 10173) Notice:</strong> Your information is collected solely for AFPMBAI official loan inquiry follow-up. It is never logged in public channels, sold, or shared with unauthorized entities.
+        </div>
+
+        <form id="escalation-form">
+          <div class="form-group">
+            <label for="esc-name">Full Name (Pangalan) *</label>
+            <input type="text" id="esc-name" placeholder="e.g., TSg Juan Dela Cruz" required />
+          </div>
+
+          <div class="form-group">
+            <label for="esc-phone">Contact Number *</label>
+            <input type="tel" id="esc-phone" placeholder="e.g., 09171234567" required />
+          </div>
+
+          <div class="form-group">
+            <label for="esc-email">Email Address *</label>
+            <input type="email" id="esc-email" placeholder="e.g., juan.delacruz@afp.mil.ph" required />
+          </div>
+
+          <div class="form-group">
+            <label for="esc-summary">Inquiry to be Forwarded</label>
+            <textarea id="esc-summary" rows="3" readonly style="background:#f1f5f9; font-size:13px;"></textarea>
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="esc-consent" required />
+            <span>I explicitly consent to submitting my contact information and inquiry context to AFPMBAI authorized customer service for official verification.</span>
+          </label>
+
+          <div class="sheet-actions">
+            <button type="button" class="btn-secondary" onclick="closeEscalationModal()">Cancel</button>
+            <button type="submit" class="btn-primary" id="btn-submit-escalate">Generate Email Dispatch</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- KNOWLEDGE BASE & SETTINGS MODAL -->
+    <div class="modal-overlay" id="settings-modal">
+      <div class="modal-sheet">
+        <div class="sheet-handle"></div>
+        <span class="admin-pill">Owner & Testing Mode</span>
+        <h2 class="sheet-title">Knowledge Base & Escalation</h2>
+        <p class="sheet-sub">Manage official reference documents and support email endpoints without hardcoding secrets.</p>
+
+        <div class="form-group">
+          <label>Target Support Email for Escalations</label>
+          <input type="email" id="cfg-support-email" value="mailinquiry@afpmbai.com.ph" />
+        </div>
+
+        <div class="form-group">
+          <label>Add Official Circular / Custom Document Snippet</label>
+          <textarea id="cfg-custom-knowledge" rows="4" placeholder="Paste official AFPMBAI circular notes, updated interest rates, or eligibility rules here..."></textarea>
+        </div>
+
+        <div class="sheet-actions">
+          <button type="button" class="btn-secondary" onclick="closeSettingsModal()">Close</button>
+          <button type="button" class="btn-primary" onclick="saveSettings()">Save Knowledge</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /**
+     * AFPMBAI AUTHORITATIVE KNOWLEDGE BASE
+     * Compiled from official AFPMBAI policy guidelines and services:
+     * - Armed Forces and Police Mutual Benefit Association, Inc.
+     * - Servicing AFP, PNP, BJMP, BFP, and PCG active members & retirees.
+     */
+    const AFPMBAI_KNOWLEDGE = [
+      {
+        id: "salary-loan",
+        keywords: ["salary", "sweldo", "salary loan", "magkano salary loan", "terms salary", "active"],
+        title: "AFPMBAI Salary Loan",
+        summary: "Available to active, regular uniformed personnel of the AFP, PNP, BJMP, BFP, and PCG.",
+        details: [
+          "Eligibility: Active member with active permanent basic life insurance in force.",
+          "Capacity to pay: Subject to the mandated Net Take-Home Pay (NTHP) requirement of the branch of service.",
+          "Requirements: Valid military/police service ID, latest 3 months certified payslips, and completed Salary Loan Application Form.",
+          "Payment Terms: Flexible terms usually from 1 to 5 years depending on unit clearance and remaining service term."
+        ],
+        source: "AFPMBAI Official Loan Catalog (afpmbai.com.ph/salary-loan)",
+        link: "https://www.afpmbai.com.ph"
+      },
+      {
+        id: "policy-loan",
+        keywords: ["policy loan", "policy", "cash surrender", "insurance loan", "equity", "cash value"],
+        title: "AFPMBAI Policy Loan",
+        summary: "A loan against the cash value (equity) of your permanent life insurance plan (e.g., 5-EDP, E-54, etc.).",
+        details: [
+          "Eligibility: Policy must have been in force for at least 1-2 years and must have accumulated a sufficient Cash Value.",
+          "Loanable Amount: Up to 90% of the policy's accumulated Cash Surrender Value.",
+          "Requirements: Duly accomplished Policy Loan Application Form, copy of valid government/service ID, and original policy contract (if requested).",
+          "Interest: Prevailing low mutual association interest rates deducted as per policy schedule."
+        ],
+        source: "AFPMBAI Member Insurance Handbook",
+        link: "https://www.afpmbai.com.ph"
+      },
+      {
+        id: "calamity-loan",
+        keywords: ["calamity", "bagyo", "baha", "kalamidad", "state of calamity", "calamity loan"],
+        title: "AFPMBAI Calamity Loan Assistance",
+        summary: "Special assistance activated when a member's residence or duty station is placed under a state of calamity.",
+        details: [
+          "Eligibility: Active regular uniformed members residing or assigned in areas officially declared under a State of Calamity by the President or Local Government Unit (LGU).",
+          "Requirements: Proof of residency or assignment in the declared calamity zone, official Barangay or LGU certification of calamity damage, service ID, and latest payslip.",
+          "Note: Application must normally be filed within 90 days from the date of the official declaration."
+        ],
+        source: "AFPMBAI Calamity Assistance Guidelines",
+        link: "https://www.afpmbai.com.ph"
+      },
+      {
+        id: "housing-loan",
+        keywords: ["housing", "bahay", "lupa", "housing loan", "real estate", "mortgage"],
+        title: "AFPMBAI Real Estate & Housing Loan",
+        summary: "Financing programs for lot acquisition, house construction, home improvement, or purchasing AFPMBAI acquired assets.",
+        details: [
+          "Eligibility: Regular members with at least 12 months continuous membership, within eligible age limits prior to retirement.",
+          "Coverage: Lot purchase, house and lot, home construction, refinancing of existing mortgage.",
+          "Requirements: Transfer Certificate of Title (TCT/CCT), Tax Declaration, latest 3 months payslips, proof of additional income, valid government IDs."
+        ],
+        source: "AFPMBAI Real Estate Division Procedures",
+        link: "https://www.afpmbai.com.ph"
+      },
+      {
+        id: "contact-channels",
+        keywords: ["contact", "branch", "saan opisina", "hotline", "email", "office", "head office", "telephone", "customer service"],
+        title: "AFPMBAI Official Channels & Assistance",
+        summary: "Official contact avenues for claims, loans, and policy inquiries.",
+        details: [
+          "Head Office: AFPMBAI Building, Col. Bonny Serrano Ave. cor. EDSA, Camp Aguinaldo, Quezon City.",
+          "Trunklines: (02) 8911-4051 to 60",
+          "Official Email: mailinquiry@afpmbai.com.ph",
+          "Nationwide: Over 17 branch offices located near major military/police camps (Fort Magsaysay, Camp Olivas, Cebu, Davao, Zamboanga, etc.)."
+        ],
+        source: "AFPMBAI Directory & Branch Locator",
+        link: "https://www.afpmbai.com.ph"
+      }
+    ];
+
+    // APPLICATION STATE
+    let conversationState = {
+      history: [],
+      pendingEscalationContext: null,
+      customKnowledgeDocs: localStorage.getItem("afpmbai_custom_docs") || "",
+      supportEmail: localStorage.getItem("afpmbai_support_email") || "mailinquiry@afpmbai.com.ph"
+    };
+
+    // DOM ELEMENTS
+    const chatMessagesEl = document.getElementById("chat-messages");
+    const chatInputEl = document.getElementById("chat-input");
+    const escalateModalEl = document.getElementById("escalate-modal");
+    const settingsModalEl = document.getElementById("settings-modal");
+    const escSummaryEl = document.getElementById("esc-summary");
+
+    // INITIALIZATION
+    window.addEventListener("DOMContentLoaded", () => {
+      loadSavedConversation();
+      setupChipListeners();
+    });
+
+    function setupChipListeners() {
+      document.querySelectorAll(".prompt-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          const prompt = chip.getAttribute("data-prompt");
+          chatInputEl.value = prompt;
+          handleSend();
+        });
+      });
+
+      document.getElementById("btn-clear-chat").addEventListener("click", () => {
+        if (confirm("Gusto mo bang burahin ang chat history?")) {
+          conversationState.history = [];
+          localStorage.removeItem("afpmbai_chat_history");
+          loadWelcomeMessage();
+        }
+      });
+
+      document.getElementById("btn-knowledge-mgr").addEventListener("click", () => {
+        document.getElementById("cfg-support-email").value = conversationState.supportEmail;
+        document.getElementById("cfg-custom-knowledge").value = conversationState.customKnowledgeDocs;
+        settingsModalEl.classList.add("active");
+      });
+    }
+
+    function loadSavedConversation() {
+      const saved = localStorage.getItem("afpmbai_chat_history");
+      if (saved) {
+        try {
+          conversationState.history = JSON.parse(saved);
+          chatMessagesEl.innerHTML = "";
+          conversationState.history.forEach(msg => renderMessageToUI(msg));
+          scrollToBottom();
+          return;
+        } catch (e) {
+          console.error("Failed to parse history", e);
+        }
+      }
+      loadWelcomeMessage();
+    }
+
+    function loadWelcomeMessage() {
+      chatMessagesEl.innerHTML = "";
+      const welcome = {
+        role: "bot",
+        text: `Mabuhay! Ako ang iyong **AFPMBAI Loan Assistant**.\n\nHanda akong sumagot sa mga katanungan ukol sa official loan products (Salary, Policy, Calamity, Housing), requirements, eligibility, at guidelines ng AFPMBAI para sa uniformed personnel at regular members.\n\n*Paalala: Nagsasalita po ako ng Filipino, English, at Taglish. Paano kita matutulungan ngayon?*`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        source: "AFPMBAI Official Member Portal (2024–2026 Verification Standards)",
+        link: "https://www.afpmbai.com.ph"
+      };
+      conversationState.history = [welcome];
+      renderMessageToUI(welcome);
+    }
+
+    function renderMessageToUI(msg) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `message ${msg.role}`;
+
+      const bubbleDiv = document.createElement("div");
+      bubbleDiv.className = "bubble";
+      bubbleDiv.innerHTML = formatMarkdown(msg.text);
+
+      if (msg.role === "bot" && msg.source) {
+        const citeDiv = document.createElement("div");
+        citeDiv.className = "citation-box";
+        citeDiv.innerHTML = `<strong>Reference:</strong> ${escapeHtml(msg.source)} ${msg.link ? `(<a href="${escapeHtml(msg.link)}" target="_blank" rel="noopener">Official Link</a>)` : ''}`;
+        bubbleDiv.appendChild(citeDiv);
+      }
+
+      if (msg.role === "bot" && msg.offerEscalation) {
+        const escCard = document.createElement("div");
+        escCard.className = "escalate-card";
+        escCard.innerHTML = `
+          <strong>Kailangan ba ng direktang beripikasyon?</strong>
+          <span>Maaari nating iparating ang katanungang ito sa designated support team para sa opisyal na pagsusuri.</span>
+          <button class="btn-escalate" onclick="openEscalationModal('${escapeHtml(msg.rawQuery || "")}')">I-forward ang Inquiry</button>
+        `;
+        bubbleDiv.appendChild(escCard);
+      }
+
+      const timeDiv = document.createElement("div");
+      timeDiv.className = "timestamp";
+      timeDiv.textContent = msg.timestamp;
+
+      msgDiv.appendChild(bubbleDiv);
+      msgDiv.appendChild(timeDiv);
+      chatMessagesEl.appendChild(msgDiv);
+    }
+
+    function scrollToBottom() {
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    // NATURAL LANGUAGE & KNOWLEDGE RETRIEVAL ENGINE
+    function handleSend() {
+      const text = chatInputEl.value.trim();
+      if (!text) return;
+
+      // 1. Post User Message
+      const userMsg = {
+        role: "user",
+        text: text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      conversationState.history.push(userMsg);
+      renderMessageToUI(userMsg);
+      chatInputEl.value = "";
+      scrollToBottom();
+      saveChat();
+
+      // 2. Show Typing Indicator
+      const typingIndicator = showTypingIndicator();
+
+      // 3. Process Intent with Slight Natural Delay
+      setTimeout(() => {
+        typingIndicator.remove();
+        const botResponse = generateBotResponse(text);
+        conversationState.history.push(botResponse);
+        renderMessageToUI(botResponse);
+        saveChat();
+        scrollToBottom();
+      }, 500);
+    }
+
+    function showTypingIndicator() {
+      const typingDiv = document.createElement("div");
+      typingDiv.className = "message bot";
+      typingDiv.id = "typing-bubble";
+      typingDiv.innerHTML = `
+        <div class="bubble">
+          <div class="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      `;
+      chatMessagesEl.appendChild(typingDiv);
+      scrollToBottom();
+      return typingDiv;
+    }
+
+    function generateBotResponse(input) {
+      const lower = input.toLowerCase();
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Greetings handling
+      if (/^(hi|hello|kumusta|kamusta|good\s(morning|afternoon|evening)|hey|magandang\s(araw|umaga|hapon|gabi))/i.test(lower)) {
+        return {
+          role: "bot",
+          text: "Magandang araw! Ako ang AFPMBAI Loan Assistant. Handa akong sumagot sa mga katanungan tungkol sa Salary Loan, Policy Loan, Calamity Loan, Housing Loan, at mga kaukulang requirements nito. Ano ang nais ninyong alamin?",
+          timestamp: now
+        };
+      }
+
+      // Check Custom Uploaded Knowledge First
+      if (conversationState.customKnowledgeDocs) {
+        const customLines = conversationState.customKnowledgeDocs.split("\n");
+        const matchedLine = customLines.find(line => {
+          const words = lower.split(" ").filter(w => w.length > 3);
+          return words.some(w => line.toLowerCase().includes(w));
+        });
+        if (matchedLine && matchedLine.trim().length > 15) {
+          return {
+            role: "bot",
+            text: `Batay sa idinagdag na opisyal na circular/talaan:\n\n${matchedLine.trim()}\n\n*Paalala: Tiyakin na beripikado ang dokumentong pinagbatayan sa inyong pinakamalapit na AFPMBAI branch.*`,
+            source: "Uploaded Official Document / Owner Custom Circular",
+            timestamp: now
+          };
+        }
+      }
+
+      // Check Authoritative Database
+      let matchedDoc = null;
+      let highestMatch = 0;
+
+      for (const item of AFPMBAI_KNOWLEDGE) {
+        let matches = 0;
+        for (const kw of item.keywords) {
+          if (lower.includes(kw)) {
+            matches++;
+          }
+        }
+        if (matches > highestMatch) {
+          highestMatch = matches;
+          matchedDoc = item;
+        }
+      }
+
+      if (matchedDoc && highestMatch > 0) {
+        let detailsText = matchedDoc.details.map(d => `• ${d}`).join("\n");
+        return {
+          role: "bot",
+          text: `**${matchedDoc.title}**\n\n${matchedDoc.summary}\n\n**Mahahalagang Detalye:**\n${detailsText}`,
+          source: matchedDoc.source,
+          link: matchedDoc.link,
+          timestamp: now
+        };
+      }
+
+      // Fallback: If no reliable authoritative answer found
+      return {
+        role: "bot",
+        text: `Ipagpaumanhin po, ngunit ang partikular na katanungang ito ay nangangailangan ng karagdagang beripikasyon mula sa opisyal na tanggapan ng AFPMBAI.\n\n*Upang maiwasan ang maling impormasyon sa interest rates, loanable equity, o individual account balances, hindi kami nag-iimbento ng datos nang walang kaukulang official record.*`,
+        timestamp: now,
+        offerEscalation: true,
+        rawQuery: input
+      };
+    }
+
+    // ESCALATION MODAL HANDLING
+    function openEscalationModal(query) {
+      conversationState.pendingEscalationContext = query || "General Loan Inquiry";
+      escSummaryEl.value = `Subject: Unverified AFPMBAI Inquiry\nQuestion: "${conversationState.pendingEscalationContext}"\nPrior Chat Excerpt: ${getLastUserContext()}`;
+      escalateModalEl.classList.add("active");
+    }
+
+    function closeEscalationModal() {
+      escalateModalEl.classList.remove("active");
+    }
+
+    function getLastUserContext() {
+      const userMsgs = conversationState.history.filter(m => m.role === "user").slice(-2);
+      return userMsgs.map(m => m.text).join(" -> ") || "Direct Query";
+    }
+
+    document.getElementById("escalation-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("esc-name").value.trim();
+      const phone = document.getElementById("esc-phone").value.trim();
+      const email = document.getElementById("esc-email").value.trim();
+      const consent = document.getElementById("esc-consent").checked;
+
+      if (!consent) {
+        alert("Pakiusap, basahin at lagyan ng check ang Data Privacy consent bago magpatuloy.");
+        return;
+      }
+
+      // Generate Mailto Dispatch link (Safe, strictly client-side, zero exposed API keys)
+      const recipient = conversationState.supportEmail;
+      const subject = encodeURIComponent(`AFPMBAI Loan Inquiry: ${name}`);
+      const body = encodeURIComponent(
+        `Dear AFPMBAI Support Team,\n\n` +
+        `I would like to request official verification regarding my loan inquiry:\n\n` +
+        `INQUIRY DETAILS:\n` +
+        `----------------------------------------\n` +
+        `Question: ${conversationState.pendingEscalationContext}\n` +
+        `Member Name: ${name}\n` +
+        `Contact Phone: ${phone}\n` +
+        `Email: ${email}\n` +
+        `Consent Given: Yes (In compliance with Data Privacy Act of 2012)\n` +
+        `Context History: ${getLastUserContext()}\n` +
+        `----------------------------------------\n\n` +
+        `Please provide official requirements and loan guidelines.\n\nRespectfully,\n${name}`
+      );
+
+      const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${body}`;
+
+      // Inform User in Chat
+      const confirmMsg = {
+        role: "bot",
+        text: `✅ **Handa na ang iyong Inquiry Package!**\n\nNaihanda na ang draft para kay **${escapeHtml(name)}** patungong **${escapeHtml(recipient)}**.\n\n*Paunawa: Dahil ito ay testing prototype, bubuksan nito ang inyong default iPhone Mail app upang kumpirmahin ang pagpapadala.*`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        source: "Escalation Dispatcher"
+      };
+
+      conversationState.history.push(confirmMsg);
+      renderMessageToUI(confirmMsg);
+      saveChat();
+      scrollToBottom();
+
+      closeEscalationModal();
+      document.getElementById("escalation-form").reset();
+
+      // Trigger the native Mail client
+      window.location.href = mailtoUrl;
+    });
+
+    // SETTINGS MODAL
+    function closeSettingsModal() {
+      settingsModalEl.classList.remove("active");
+    }
+
+    function saveSettings() {
+      const mail = document.getElementById("cfg-support-email").value.trim();
+      const docs = document.getElementById("cfg-custom-knowledge").value.trim();
+
+      conversationState.supportEmail = mail || "mailinquiry@afpmbai.com.ph";
+      conversationState.customKnowledgeDocs = docs;
+
+      localStorage.setItem("afpmbai_support_email", conversationState.supportEmail);
+      localStorage.setItem("afpmbai_custom_docs", conversationState.customKnowledgeDocs);
+
+      alert("Matagumpay na na-update ang Knowledge Base at Settings.");
+      closeSettingsModal();
+    }
+
+    function saveChat() {
+      localStorage.setItem("afpmbai_chat_history", JSON.stringify(conversationState.history));
+    }
+
+    // UTILITIES
+    function escapeHtml(string) {
+      if (!string) return "";
+      return String(string)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatMarkdown(text) {
+      if (!text) return "";
+      let escaped = escapeHtml(text);
+      // Bold
+      escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Italics
+      escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // Line breaks
+      escaped = escaped.replace(/\n/g, '<br>');
+      return escaped;
+    }
+  </script>
+</body>
+</html>
